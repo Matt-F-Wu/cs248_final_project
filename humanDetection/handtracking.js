@@ -294,7 +294,7 @@ function hsvToRgb(h, s, v) {
 
 
 
-const scaleSatLower = 0.24;
+const scaleSatLower = 0.6;
 const scaleSatUpper = 0.9;
 //Throwing away the V channel in HSV and only considering H and S channels is really enough (surprisingly) to detect different skin tones and under different lighting variations. A plus side is that its computation is fast.
 const hsv_min = [0, 255*scaleSatLower, 0];

@@ -70,6 +70,7 @@ DEMO.prototype.draw = function(candidate){
   if (candidate){
 
     if (this.cbxHull.checked){
+      console.log(candidate.hull);
       this.drawHull(candidate.hull, "red");
     }
 

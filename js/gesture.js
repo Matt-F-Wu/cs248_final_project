@@ -53,7 +53,8 @@ DEMO.prototype.tick = function(){
 
   if (this.video.readyState === this.video.HAVE_ENOUGH_DATA){
     image = this.snapshot();
-
+    /* Abtain a medium quality jpg image to send to backend */
+    this.canvas.toDataURL('image/jpeg', 0.5);
     candidate = this.tracker.detect(image);
 
     this.draw(candidate);

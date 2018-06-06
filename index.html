@@ -1,21 +1,20 @@
-
-<html>
-
+<html ng-app="mainApp">
 <head>
   <title>Hand Tracking</title>
-
+  <script src="./node_modules/angular/angular.js" type="text/javascript" ></script>
+  <script src="node_modules/angular-resource/angular-resource.js"></script>
   <script type="text/javascript" src="./humanDetection/polyfill.js"></script>
   <script type="text/javascript" src="./humanDetection/cv.js"></script>
   <script type="text/javascript" src="./humanDetection/handtracking.js"></script>
-
-  <script src="js/gesture.js"></script>
+  <!-- <script src="js/gesture.js"></script> -->
+  <script type="text/javascript" src="./main.js"></script>
 
   <style>
     *, html {padding: 0; margin: 0;}
   </style>
 </head>
 
-<body style="font-family: monospace;">
+<body style="font-family: monospace;" ng-controller="MainController">
 
   <center>
     <div style="margin: 10px;"><strong>-= Hand Tracking =-</strong></div>

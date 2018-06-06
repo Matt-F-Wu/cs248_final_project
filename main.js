@@ -94,8 +94,11 @@ app.controller('MainController', ['$scope', '$resource', function($scope, $resou
               let y = (that.p2d[3][1] - that.p2d[1][1]) + (that.p2d[7][1] - that.p2d[5][1]);
               direction.set(x, y, -1).normalize();
             }
+            if(source){
+              source.set(that.p2d[20][0], that.p2d[20][1], 0);
+            }
             //** Obtained  **//
-            console.log(that.p2d);
+            // console.log(that.p2d);
             // that.drawJoints(that.p2d);
             // Processing finished, no longer blocking
             blocking = false;

@@ -1,6 +1,8 @@
 var app = angular.module('mainApp', ['ngResource']);
 
 app.controller('MainController', ['$scope', '$resource', function($scope, $resource) {
+    $scope.hand_control = true;
+
     var Predict = $resource('http://localhost:8080/prediction');
     var blocking = false;
     
@@ -18,10 +20,10 @@ app.controller('MainController', ['$scope', '$resource', function($scope, $resou
         return canvas.toDataURL('image/jpeg', 0.8);
     }
 
-    var DEMO = function(){
+    var Gesture = function(){
     };
 
-    DEMO.prototype.start = function() {
+    Gesture.prototype.start = function() {
       var that = this;
 
       this.tracker = new HT.Tracker( {fast: true} );
@@ -50,7 +52,7 @@ app.controller('MainController', ['$scope', '$resource', function($scope, $resou
       }
     };
 
-    DEMO.prototype.videoReady = function(stream){
+    Gesture.prototype.videoReady = function(stream){
       if (window.webkitURL) {
         this.video.src = window.webkitURL.createObjectURL(stream);
       } else if (video.mozSrcObject !== undefined) {
@@ -62,17 +64,19 @@ app.controller('MainController', ['$scope', '$resource', function($scope, $resou
       this.tick();
     };
 
-    DEMO.prototype.videoError = function(error){
+    Gesture.prototype.videoError = function(error){
     };
 
-    DEMO.prototype.p2d = [];
-    DEMO.prototype.p3d = [];
+    Gesture.prototype.p2d = [];
+    Gesture.prototype.p3d = [];
 
-    DEMO.prototype.tick = function(){
+    Gesture.prototype.tick = function(){
       var that = this, image, candidate;
 
       /* Continuously track hand movements per animation frame*/
-      requestAnimationFrame( function() { return that.tick(); } );
+      if($scope.hand_control) {
+        requestAnimationFrame( function() { return that.tick(); } );
+      }
 
       if (this.video.readyState === this.video.HAVE_ENOUGH_DATA){
         image = this.snapshot();
@@ -88,10 +92,13 @@ app.controller('MainController', ['$scope', '$resource', function($scope, $resou
             }
             that.p2d = joints.p2d;
             that.p3d = joints.p3d;
+            let scaling = 1 / 224 * this.canvas.width;
             if(direction){
               // Use index and middle finger to find direction
               let x = (that.p2d[3][0] - that.p2d[1][0]) + (that.p2d[7][0] - that.p2d[5][0]);
+              x *= scaling;
               let y = (that.p2d[3][1] - that.p2d[1][1]) + (that.p2d[7][1] - that.p2d[5][1]);
+              y *= scaling;
               direction.set(x, y, -1).normalize();
             }
             if(source){
@@ -110,7 +117,7 @@ app.controller('MainController', ['$scope', '$resource', function($scope, $resou
       }
     };
 
-    DEMO.prototype.drawJoints = function(p2d){
+    Gesture.prototype.drawJoints = function(p2d){
       var self = this;
       self.context.fillStyle="#FF0000";
       p2d.forEach((p, i) => {
@@ -118,15 +125,15 @@ app.controller('MainController', ['$scope', '$resource', function($scope, $resou
       });
     }
 
-    DEMO.prototype.snapshot = function(){
+    Gesture.prototype.snapshot = function(){
       this.context.drawImage(this.video, 0, 0, this.canvas.width, this.canvas.height);
 
       return imageToDataUri(this.video, 224, 224);
     };
 
     window.onload = function(){
-      var demo = new DEMO();
-      demo.start();
+      var gesture = new Gesture();
+      gesture.start();
     };
 
   }]);

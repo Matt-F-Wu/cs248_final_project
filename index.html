@@ -7,7 +7,10 @@
   <script type="text/javascript" src="./humanDetection/cv.js"></script>
   <script type="text/javascript" src="./humanDetection/handtracking.js"></script>
   <!-- <script src="js/gesture.js"></script> -->
+  <script src="js/three.js"></script>
+  <script src="js/GPUParticleSystem.js"></script>
   <script type="text/javascript" src="./main.js"></script>
+
 
   <style>
     *, html {padding: 0; margin: 0;}
@@ -20,8 +23,8 @@
     <div style="margin: 10px;"><strong>-= Hand Tracking =-</strong></div>
     <video id="video" autoplay="true" style="display:none;"></video>
     <div style="display: flex; align-items: center; justify-content: center">
-      <canvas id="canvas" style="width:640px; height:480px; opacity: 1.0;" width="320" height="240"></canvas>
-      <div id="layers" style="width:640px; height:480px; position: absolute;"></div>
+      <canvas id="canvas" style="width:640px; height:480px; opacity: 1.0; z-index: 10;" width="320" height="240"></canvas>
+      <div id="layers" style="width:640px; height:480px; position: absolute; z-index: 20;"></div>
     </div>
     <div style="margin: 15px;">
       <input id="cbxHull" type="checkbox" checked="checked">Convex Hull</input>
@@ -30,8 +33,6 @@
     </div>
     <div style="margin: 15px;"><strong>Powered by <a href="https://github.com/jcmellado/js-handtracking" target="_blank">js-handtracking</a></strong></div>
   </center>
-
-  <script src="js/three.js"></script>
   <script src="js/particle.js"></script>
 </body>
 

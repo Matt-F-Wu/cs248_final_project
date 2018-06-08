@@ -1,3 +1,5 @@
+/* Statistical approach of finding hand gesture related information */
+
 var DEMO = function(){
 };
 

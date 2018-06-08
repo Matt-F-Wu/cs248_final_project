@@ -1,100 +1,121 @@
-var width = 640;
-var height = 480;
+var camera, tick = 0,
+      scene, renderer, clock = new THREE.Clock(),
+      controls, container,
+      options, spawnerOptions, particleSystem, light;
 
-var scene = new THREE.Scene();
+    init();
+    animate();
 
-var camera = new THREE.PerspectiveCamera( 75, width/height, 0.1, 1000 );
-camera.position.set(0, 0, 50);
+    function init() {
 
-var renderer = new THREE.WebGLRenderer({alpha: true, antialias: true});
-renderer.setSize(width, height);
-renderer.setClearColor(0x000000, 0.0);
+      //
 
-var canvas = document.getElementById("layers").appendChild( renderer.domElement );
-//canvas.style.opacity = 0.999; // ???
+      container = document.getElementById( 'layers' );
 
-var light = new THREE.DirectionalLight( 0xffffff );
-light.position.set( 0, 1, 0 ).normalize();
-scene.add(light);
+      camera = new THREE.PerspectiveCamera( 28, window.innerWidth / window.innerHeight, 1, 10000 );
+      camera.position.z = 100;
 
-// hyperparameters for the particle system
-var direction = new THREE.Vector3(0, 1, 0),
-    source = new THREE.Vector3(0, 0, 0),
-    hide = new THREE.Vector3(1000, 1000, 0),
-    particleCount = 200,
-    gesture = 0,
-    rate = 1,
-    life = 60,
-    speed = 1.5,
-    spread = 0.2;
+      scene = new THREE.Scene();
 
-var particles = new THREE.Geometry(),
-    pMaterial = new THREE.PointsMaterial({
-      color: 0x0000FF,
-      size: 5,
-      map: new THREE.TextureLoader().load(
-        "images/snow.png"
-      ),
-      blending: THREE.AdditiveBlending,
-      transparent: true
-    });
+      // The GPU Particle system extends THREE.Object3D, and so you can use it
+      // as you would any other scene graph component.  Particle positions will be
+      // relative to the position of the particle system, but you will probably only need one
+      // system for your whole scene
 
-function initializeParticle(particle, position) {
-  particle.t = 0;
-  particle.v = direction.clone().normalize();
-  particle.v.multiplyScalar(speed * Math.random());
-  particle.v.x += spread * (Math.random() - 0.5); // TODO
-  particle.a = 0;
-  particle.set(position.x, position.y, position.z);
-}
+      particleSystem = new THREE.GPUParticleSystem( {
+        maxParticles: 250000
+      } );
 
-var particlePool = [],
-    particleEmitted = [];
+      scene.add( particleSystem );
 
-for (var p = 0; p < particleCount; p++) {
-  var particle = new THREE.Vector3();
-  initializeParticle(particle, hide);
-  particles.vertices.push(particle);
-  particlePool.push(particle);
-}
+      light = new THREE.DirectionalLight( 0xffffff );
+      light.position.set( 0, 1, 0 ).normalize();
+      scene.add(light);
 
-var particleSystem = new THREE.Points(particles, pMaterial);
-scene.add(particleSystem);
+      /*
+      options passed during each spawned!
+      Hao:
+      Position is the position of the new particle.
+      We can change the position every time we spawn
+      instead of moving particles around, we can simply
+      let the old ones die (lifetime), and draw new ones 
+      at new positions to give the illusion that particles are moving
+      */
 
-var animate = function () {
-  requestAnimationFrame( animate );
+      options = {
+        position: new THREE.Vector3(),
+        positionRandomness: .3,
+        velocity: new THREE.Vector3(),
+        velocityRandomness: .5,
+        color: 0xaa88ff,
+        colorRandomness: .2,
+        turbulence: .5,
+        lifetime: 2,
+        size: 15,
+        sizeRandomness: 1
+      };
 
-  //direction.applyAxisAngle(new THREE.Vector3(0, 0, 1), 0.01);
-  source.add(new THREE.Vector3(1, 1, 1).multiplyScalar(Math.random() - 0.5))
+      spawnerOptions = {
+        spawnRate: 15000,
+        horizontalSpeed: 1.5,
+        verticalSpeed: 1.33,
+        timeScale: 1
+      };
 
-  // emit new particles
-  for (var i = 0; i < rate; i++) {
-    if (particlePool.length > 0) {
-      var particle = particlePool[particlePool.length - 1];
-      initializeParticle(particle, source);
-      particlePool.pop();
-      particleEmitted.push(particle);
+      // Rederer
+
+      renderer = new THREE.WebGLRenderer({alpha: true, antialias: true});
+      renderer.setPixelRatio( window.devicePixelRatio );
+      renderer.setSize( container.clientWidth, container.clientHeight );
+      renderer.setClearColor(0x000000, 0.0);
+      container.appendChild( renderer.domElement );
+
+      window.addEventListener( 'resize', onWindowResize, false );
+
     }
-  }
 
-  // update emitted particles
-  var particleEmitted_new = []
-  for (var i = 0; i < particleEmitted.length; i++) {
-    var particle = particleEmitted[i];
-    particle.t += 1;
-    particle.add(particle.v);
-    if (particle.t > life) {
-      initializeParticle(particle, hide);
-      particlePool.push(particle);
-    } else {
-      particleEmitted_new.push(particle);
+    function onWindowResize() {
+
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+
+      renderer.setSize( window.innerWidth, window.innerHeight );
+
     }
-  }
-  particleEmitted = particleEmitted_new;
 
-  particles.verticesNeedUpdate = true;
+    function animate() {
 
-  renderer.render( scene, camera );
-};
+      requestAnimationFrame( animate );
 
-animate();
+      // Hao: Some variance in number of particles spawned
+      var delta = clock.getDelta() * spawnerOptions.timeScale;
+
+      tick += delta;
+
+      if ( tick < 0 ) tick = 0;
+
+      if ( delta > 0 ) {
+
+        options.position.multiplyScalar(Math.random()*4.0 - 2.0);
+
+        for ( var x = 0; x < spawnerOptions.spawnRate * delta; x++ ) {
+
+          // Spawn new particles
+          particleSystem.spawnParticle( options );
+
+        }
+
+      }
+
+      //Hao: Update particle time, this relates to life time and such
+      particleSystem.update( tick );
+
+      render();
+
+    }
+
+    function render() {
+
+      renderer.render( scene, camera );
+
+    }

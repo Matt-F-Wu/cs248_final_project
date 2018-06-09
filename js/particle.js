@@ -1,7 +1,7 @@
 var camera, tick = 0,
       scene, renderer, clock = new THREE.Clock(),
       controls, container,
-      options, spawnerOptions, particleSystem, light;
+      options, spawnerOptions, particleSystem, light, baselt;
 
     init();
     animate();
@@ -44,18 +44,20 @@ var camera, tick = 0,
 
       options = {
         position: new THREE.Vector3(),
-        containerCount: 1000,
+        containerCount: 100,
         positionRandomness: 0.0,
         smoothPosition: false,
         velocity: new THREE.Vector3(),
-        velocityRandomness: 1.5,
+        velocityRandomness: 0.5,
         color: 0xaa88ff,
         colorRandomness: .2,
         turbulence: 0.0,
-        lifetime: 5,
+        lifetime: 6,
         size: 20,
         sizeRandomness: 1
       };
+
+      baselt = options.lifetime;
 
       spawnerOptions = {
         spawnRate: 10000,
@@ -97,27 +99,14 @@ var camera, tick = 0,
       if ( tick < 0 ) tick = 0;
 
       if ( delta > 0 ) {
-
         //options.position.multiplyScalar(Math.random()*4.0 - 2.0);
-        options.velocity.set(50.0, 0.0, 0.0);
-
+        let r = Math.random() * Math.PI;
+        options.velocity.set(1., 0., 0.0).normalize();
+        // Give particles arbitary life
         for ( var x = 0; x < spawnerOptions.spawnRate * delta; x++ ) {
           // Spawn new particles
+          options.lifetime = baselt * (Math.random() + 0.5);
           let pContainer = particleSystem.spawnParticle( options );
-          // Hao: need to subtract by one because the particle cursor already moved on to the next position!
-          let idx = pContainer.PARTICLE_CURSOR - 1;
-          let positionAttribute = pContainer.particleShaderGeo.getAttribute( 'position' );
-          let x = positionAttribute.array[ idx * 3 + 0 ];
-          let y = positionAttribute.array[ idx * 3 + 1 ];
-          let z = positionAttribute.array[ idx * 3 + 2 ];
-          //console.log(x, y, z);
-          if (x > 100){
-            // Hit left or right wall
-            pContainer.particleShaderGeo.getAttribute( 'bounce' )[idx] =  1;
-          }else{
-            // Hit top or bottom wall
-          }
-
         }
 
       }

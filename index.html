@@ -38,9 +38,22 @@
       <div class="column" style="justify-content: center;"><div class="diamond-narrow-d"></div><div class="diamond-narrow-d-after"></div></div>
       <div class="column" style="justify-content: center;"><div class="diamond-narrow-a"></div><div class="diamond-narrow-a-after"></div></div>
       <div class="column" style="justify-content: center;"><div class="diamond-narrow-b"></div><div class="diamond-narrow-b-after"></div></div>
+      <div class="slidecontainer">
+        <input type="range" min="1000" max="10000" value="1000" class="slider" id="myRange">
+        <p style="color: white; font-size: 12pt; font-family: Arial;">Sqawn Rate: <span id="sprate"></span></p>
+      </div>
     </div>
-
-  <script src="js/particle.js"></script>
+    <script src="js/particle.js"></script>
+    <script type="text/javascript">
+      slider = document.getElementById("myRange");
+      output = document.getElementById("sprate");
+      output.innerHTML = slider.value;
+      // Set up slider handler
+      slider.oninput = function() {
+        spawnerOptions.spawnRate = this.value;
+        output.innerHTML = this.value;
+      }
+    </script>
 </body>
 
 </html>

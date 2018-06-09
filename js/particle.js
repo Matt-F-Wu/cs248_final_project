@@ -3,6 +3,9 @@ var camera, tick = 0,
       controls, container,
       options, spawnerOptions, particleSystem, light, baselt;
 
+var slider;
+var output;
+
     function handleMouseMove(event){
       if(!useAI){
         let x_c = window.innerWidth / 2;
@@ -108,7 +111,6 @@ var camera, tick = 0,
       container.appendChild( renderer.domElement );
 
       window.addEventListener( 'resize', onWindowResize, false );
-
     }
 
     function onWindowResize() {

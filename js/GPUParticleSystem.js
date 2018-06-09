@@ -37,6 +37,9 @@ THREE.GPUParticleSystem = function ( options ) {
 
 	this.flex_position = false || options.flex_position;
 
+	this.x_threshold = options.x_threshold || 32;
+	this.y_threshold = options.y_threshold || 24;
+
 	// custom vertex and fragement shader
 
 	var GPUParticleShader = {
@@ -46,6 +49,8 @@ THREE.GPUParticleSystem = function ( options ) {
 			'uniform float uTime;',
 			'uniform float uScale;',
 			'uniform sampler2D tNoise;',
+			'uniform float x_threshold;',
+			'uniform float y_threshold;',
 			
 			'attribute vec3 positionStart;',
 			'attribute float startTime;',
@@ -80,9 +85,6 @@ THREE.GPUParticleSystem = function ( options ) {
 			'	v.z = ( velocity.z - 0.5 ) * 3.0;',
 
 			'	newPosition = positionStart + ( v * 10.0 ) * timeElapsed;',
-
-			'float x_threshold = 32.;',
-			'float y_threshold = 24.;',
 
 			'float x = abs(newPosition.x);',
 			'float y = abs(newPosition.y);',
@@ -243,6 +245,12 @@ THREE.GPUParticleSystem = function ( options ) {
 			},
 			'tSprite': {
 				value: this.particleSpriteTex
+			},
+			'x_threshold': {
+				value: this.x_threshold
+			},
+			'y_threshold': {
+				value: this.y_threshold
 			}
 		},
 		blending: THREE.AdditiveBlending,

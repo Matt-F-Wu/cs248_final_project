@@ -1,8 +1,7 @@
 var camera, tick = 0,
       scene, renderer, clock = new THREE.Clock(),
       controls, container,
-      options, spawnerOptions, particleSystem, light, baselt, useAI = false,
-      direction = new THREE.Vector3(1, 0, 0);
+      options, spawnerOptions, particleSystem, light, baselt, useAI = false;
 
     function handleMouseMove(event){
       if(!useAI){
@@ -30,8 +29,19 @@ var camera, tick = 0,
 
       container = document.getElementById( 'layers' );
 
-      camera = new THREE.PerspectiveCamera( 28, window.innerWidth / window.innerHeight, 1, 10000 );
+      container.style.height = window.innerHeight + 'px';
+      container.style.width = 4/3 * window.innerHeight + 'px';
+
+      var videoDisp = document.getElementById( 'canvas' );
+      videoDisp.style.height =  container.style.height;
+      videoDisp.style.width =  container.style.width;
+
+      console.log("Particle");
+
+      camera = new THREE.PerspectiveCamera( 28, 640 / 480, 1, 1000 );
       camera.position.z = 100;
+
+      var vector = new THREE.Vector3( 1, 1, -1 ).unproject( camera );
 
       scene = new THREE.Scene();
 
@@ -82,7 +92,9 @@ var camera, tick = 0,
         turbulence: 0.0,
         lifetime: 6,
         size: 20,
-        sizeRandomness: 1
+        sizeRandomness: 1,
+        x_threshold: vector.x,
+        y_threshold: vector.y,
       };
 
       baselt = options.lifetime;

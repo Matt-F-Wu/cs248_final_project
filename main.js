@@ -35,7 +35,7 @@ app.controller('MainController', ['$scope', '$resource', function($scope, $resou
       this.video = document.getElementById("video");
       this.canvas = document.getElementById("canvas");
       this.context = this.canvas.getContext("2d");
-
+      console.log("Gesture...");
       this.canvas.width = parseInt(this.canvas.style.width);
       this.canvas.height = parseInt(this.canvas.style.height);
 

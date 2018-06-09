@@ -38,13 +38,23 @@ var camera, tick = 0,
       Position is the position of the new particle.
       We can change the position every time we spawn
       instead of moving particles around, we can simply
-      let the old ones die (lifetime), and draw new ones 
+      let the old ones die (lifetime), and draw new ones
       at new positions to give the illusion that particles are moving
       */
 
       options = {
-        position: new THREE.Vector3(),
-        containerCount: 100,
+        // position: new THREE.Vector3(-20, 0, 0),
+        // positionRandomness: .3,
+        // velocity: new THREE.Vector3(10, 0, 0),
+        // velocityRandomness: 1,
+        // // TODO 加一个向心加速度，然后根据 position、velocity 和当前位置来确定加速度方向
+        // color: 0x000000,
+        // colorRandomness: 1,
+        // turbulence: 0,
+        // lifetime: 20,
+        // size: 8,
+        position: new THREE.Vector3(0.0, 0.0, 0.0),
+        containerCount: 1000,
         positionRandomness: 0.0,
         smoothPosition: false,
         velocity: new THREE.Vector3(),
@@ -60,7 +70,7 @@ var camera, tick = 0,
       baselt = options.lifetime;
 
       spawnerOptions = {
-        spawnRate: 10000,
+        spawnRate: 5000,
         horizontalSpeed: 1.5,
         verticalSpeed: 1.33,
         timeScale: 1
@@ -71,7 +81,7 @@ var camera, tick = 0,
       renderer = new THREE.WebGLRenderer({alpha: true, antialias: true});
       renderer.setPixelRatio( window.devicePixelRatio );
       renderer.setSize( container.clientWidth, container.clientHeight );
-      renderer.setClearColor(0x000000, 0.0);
+      renderer.setClearColor(0x000000, 0.0); // TODO: 1.0->0.0
       container.appendChild( renderer.domElement );
 
       window.addEventListener( 'resize', onWindowResize, false );
@@ -99,10 +109,10 @@ var camera, tick = 0,
       if ( tick < 0 ) tick = 0;
 
       if ( delta > 0 ) {
-        //options.position.multiplyScalar(Math.random()*4.0 - 2.0);
+        offset = 0
+        options.position.addScalar(Math.random() * offset- offset / 2);
         let r = Math.random() * Math.PI;
         options.velocity.set(1., 0., 0.0).normalize();
-        // Give particles arbitary life
         for ( var x = 0; x < spawnerOptions.spawnRate * delta; x++ ) {
           // Spawn new particles
           options.lifetime = baselt * (Math.random() + 0.5);

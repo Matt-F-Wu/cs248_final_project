@@ -44,19 +44,21 @@ var camera, tick = 0,
 
       options = {
         position: new THREE.Vector3(),
-        positionRandomness: .3,
+        containerCount: 1000,
+        positionRandomness: 0.0,
+        smoothPosition: false,
         velocity: new THREE.Vector3(),
-        velocityRandomness: .5,
+        velocityRandomness: 1.5,
         color: 0xaa88ff,
         colorRandomness: .2,
-        turbulence: .5,
-        lifetime: 2,
-        size: 15,
+        turbulence: 0.0,
+        lifetime: 5,
+        size: 20,
         sizeRandomness: 1
       };
 
       spawnerOptions = {
-        spawnRate: 15000,
+        spawnRate: 10000,
         horizontalSpeed: 1.5,
         verticalSpeed: 1.33,
         timeScale: 1
@@ -96,12 +98,25 @@ var camera, tick = 0,
 
       if ( delta > 0 ) {
 
-        options.position.multiplyScalar(Math.random()*4.0 - 2.0);
+        //options.position.multiplyScalar(Math.random()*4.0 - 2.0);
+        options.velocity.set(50.0, 0.0, 0.0);
 
         for ( var x = 0; x < spawnerOptions.spawnRate * delta; x++ ) {
-
           // Spawn new particles
-          particleSystem.spawnParticle( options );
+          let pContainer = particleSystem.spawnParticle( options );
+          // Hao: need to subtract by one because the particle cursor already moved on to the next position!
+          let idx = pContainer.PARTICLE_CURSOR - 1;
+          let positionAttribute = pContainer.particleShaderGeo.getAttribute( 'position' );
+          let x = positionAttribute.array[ idx * 3 + 0 ];
+          let y = positionAttribute.array[ idx * 3 + 1 ];
+          let z = positionAttribute.array[ idx * 3 + 2 ];
+          //console.log(x, y, z);
+          if (x > 100){
+            // Hit left or right wall
+            pContainer.particleShaderGeo.getAttribute( 'bounce' )[idx] =  1;
+          }else{
+            // Hit top or bottom wall
+          }
 
         }
 

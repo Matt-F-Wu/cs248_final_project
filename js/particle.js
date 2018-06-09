@@ -3,8 +3,8 @@ var camera, tick = 0,
       controls, container,
       options, spawnerOptions, particleSystem, light, baselt;
 
-var slider;
-var output;
+var slider, slider_sp;
+var output, speed;
 
     function handleMouseMove(event){
       if(!useAI){

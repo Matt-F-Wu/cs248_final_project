@@ -40,17 +40,26 @@
       <div class="column" style="justify-content: center;"><div class="diamond-narrow-b"></div><div class="diamond-narrow-b-after"></div></div>
       <div class="slidecontainer">
         <input type="range" min="1000" max="10000" value="1000" class="slider" id="myRange">
-        <p style="color: white; font-size: 12pt; font-family: Arial;">Sqawn Rate: <span id="sprate"></span></p>
+        <p style="color: white; font-size: 12pt; font-family: Arial; margin-bottom: 10px; ">Sqawn Rate: <span id="sprate"></span></p>
+        <input type="range" min="0" max="30" value="16" class="slider" id="speedRange">
+        <p style="color: white; font-size: 12pt; font-family: Arial;">Spiral Speed: <span id="speed"></span></p>
       </div>
     </div>
     <script src="js/particle.js"></script>
     <script type="text/javascript">
       slider = document.getElementById("myRange");
       output = document.getElementById("sprate");
+      slider_sp = document.getElementById("speedRange");
+      speed = document.getElementById("speed");
       output.innerHTML = slider.value;
+      speed.innerHTML = slider_sp.value;
       // Set up slider handler
       slider.oninput = function() {
         spawnerOptions.spawnRate = this.value;
+        output.innerHTML = this.value;
+      }
+      slider_sp.oninput = function() {
+        options.rotationSpeed = this.value;
         output.innerHTML = this.value;
       }
     </script>

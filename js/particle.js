@@ -43,16 +43,27 @@ var camera, tick = 0,
       */
 
       options = {
-        position: new THREE.Vector3(-20, 0, 0),
-        positionRandomness: .3,
-        velocity: new THREE.Vector3(10, 0, 0),
-        velocityRandomness: 1,
-        // TODO 加一个向心加速度，然后根据 position、velocity 和当前位置来确定加速度方向
-        color: 0x000000,
-        colorRandomness: 1,
-        turbulence: 0,
-        lifetime: 20,
-        size: 8,
+        // position: new THREE.Vector3(-20, 0, 0),
+        // positionRandomness: .3,
+        // velocity: new THREE.Vector3(10, 0, 0),
+        // velocityRandomness: 1,
+        // // TODO 加一个向心加速度，然后根据 position、velocity 和当前位置来确定加速度方向
+        // color: 0x000000,
+        // colorRandomness: 1,
+        // turbulence: 0,
+        // lifetime: 20,
+        // size: 8,
+        position: new THREE.Vector3(50.0, 0.0, 0.0),
+        containerCount: 1000,
+        positionRandomness: 0.0,
+        smoothPosition: false,
+        velocity: new THREE.Vector3(),
+        velocityRandomness: 1.5,
+        color: 0xaa88ff,
+        colorRandomness: .2,
+        turbulence: 0.0,
+        lifetime: 5,
+        size: 20,
         sizeRandomness: 1
       };
 
@@ -101,9 +112,21 @@ var camera, tick = 0,
         options.position.addScalar(Math.random() * offset- offset / 2);
 
         for ( var x = 0; x < spawnerOptions.spawnRate * delta; x++ ) {
-
           // Spawn new particles
-          particleSystem.spawnParticle( options );
+          let pContainer = particleSystem.spawnParticle( options );
+          // Hao: need to subtract by one because the particle cursor already moved on to the next position!
+          let idx = pContainer.PARTICLE_CURSOR - 1;
+          let positionAttribute = pContainer.particleShaderGeo.getAttribute( 'position' );
+          let x = positionAttribute.array[ idx * 3 + 0 ];
+          let y = positionAttribute.array[ idx * 3 + 1 ];
+          let z = positionAttribute.array[ idx * 3 + 2 ];
+          //console.log(x, y, z);
+          if (x > 100){
+            // Hit left or right wall
+            pContainer.particleShaderGeo.getAttribute( 'bounce' )[idx] =  1;
+          }else{
+            // Hit top or bottom wall
+          }
 
         }
 

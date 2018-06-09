@@ -43,28 +43,28 @@ var camera, tick = 0,
       */
 
       options = {
-        // position: new THREE.Vector3(-20, 0, 0),
-        // positionRandomness: .3,
-        // velocity: new THREE.Vector3(10, 0, 0),
-        // velocityRandomness: 1,
-        // // TODO 加一个向心加速度，然后根据 position、velocity 和当前位置来确定加速度方向
-        // color: 0x000000,
-        // colorRandomness: 1,
-        // turbulence: 0,
-        // lifetime: 20,
-        // size: 8,
-        position: new THREE.Vector3(50.0, 0.0, 0.0),
-        containerCount: 1000,
-        positionRandomness: 0.0,
-        smoothPosition: false,
-        velocity: new THREE.Vector3(),
-        velocityRandomness: 1.5,
-        color: 0xaa88ff,
-        colorRandomness: .2,
-        turbulence: 0.0,
-        lifetime: 5,
-        size: 20,
-        sizeRandomness: 1
+        position: new THREE.Vector3(-40, 0, 0),
+        positionRandomness: 2,
+        velocity: new THREE.Vector3(100, 0, 0),
+        velocityRandomness: 0.05,
+        color: 0x000000,
+        colorRandomness: 1,
+        turbulence: 0,
+        lifetime: 20,
+        size: 8,
+        rotationSpeed: 8,
+        // position: new THREE.Vector3(),
+        // containerCount: 1000,
+        // positionRandomness: 0.0,
+        // smoothPosition: false,
+        // velocity: new THREE.Vector3(50.0, 0.0, 0.0),
+        // velocityRandomness: 1.5,
+        // color: 0xaa88ff,
+        // colorRandomness: .2,
+        // turbulence: 0.0,
+        // lifetime: 5,
+        // size: 20,
+        // sizeRandomness: 1
       };
 
       spawnerOptions = {
@@ -114,6 +114,8 @@ var camera, tick = 0,
         for ( var x = 0; x < spawnerOptions.spawnRate * delta; x++ ) {
           // Spawn new particles
           let pContainer = particleSystem.spawnParticle( options );
+
+
           // Hao: need to subtract by one because the particle cursor already moved on to the next position!
           let idx = pContainer.PARTICLE_CURSOR - 1;
           let positionAttribute = pContainer.particleShaderGeo.getAttribute( 'position' );

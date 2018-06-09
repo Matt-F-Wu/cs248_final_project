@@ -39,28 +39,52 @@
       <div class="column" style="justify-content: center;"><div class="diamond-narrow-a"></div><div class="diamond-narrow-a-after"></div></div>
       <div class="column" style="justify-content: center;"><div class="diamond-narrow-b"></div><div class="diamond-narrow-b-after"></div></div>
       <div class="slidecontainer">
-        <input type="range" min="1000" max="10000" value="1000" class="slider" id="myRange">
-        <p style="color: white; font-size: 12pt; font-family: Arial; margin-bottom: 10px; ">Sqawn Rate: <span id="sprate"></span></p>
-        <input type="range" min="0" max="30" value="16" class="slider" id="speedRange">
-        <p style="color: white; font-size: 12pt; font-family: Arial;">Spiral Speed: <span id="speed"></span></p>
+        <input type="range" min="1000" max="10000" value="1000" class="slider" id="spawnRateSlider">
+        <p style="color: white; font-size: 12pt; font-family: Arial; margin-bottom: 10px; ">Spawn Rate: <span id="spawnRateValue"></span></p>
+
+        <input type="range" min="0" max="5" value="2" class="slider" id="velocitySpeedSlider">
+        <p style="color: white; font-size: 12pt; font-family: Arial; margin-bottom: 10px; ">Speed: <span id="velocitySpeedValue"></span></p>
+
+        <input type="range" min="0" max="30" value="16" class="slider" id="rotationSpeedSlider">
+        <p style="color: white; font-size: 12pt; font-family: Arial; margin-bottom: 10px; ">Rotation Speed: <span id="rotationSpeedValue"></span></p>
+
+        <input type="range" min="0" max="10" value="1" class="slider" id="rotationRadiusSlider">
+        <p style="color: white; font-size: 12pt; font-family: Arial; margin-bottom: 10px; ">Rotation Radius: <span id="rotationRadiusValue"></span></p>
+
       </div>
     </div>
     <script src="js/particle.js"></script>
     <script type="text/javascript">
-      slider = document.getElementById("myRange");
-      output = document.getElementById("sprate");
-      slider_sp = document.getElementById("speedRange");
-      speed = document.getElementById("speed");
-      output.innerHTML = slider.value;
-      speed.innerHTML = slider_sp.value;
-      // Set up slider handler
+      slider = document.getElementById("spawnRateSlider");
+      spawnRateValueOutput = document.getElementById("spawnRateValue");
+      spawnRateValueOutput.innerHTML = slider.value;
       slider.oninput = function() {
         spawnerOptions.spawnRate = this.value;
-        output.innerHTML = this.value;
+        spawnRateValueOutput.innerHTML = this.value;
       }
-      slider_sp.oninput = function() {
+
+      slider = document.getElementById("velocitySpeedSlider");
+      velocitySpeedValueOutput = document.getElementById("velocitySpeedValue");
+      velocitySpeedValueOutput.innerHTML = slider.value;
+      slider.oninput = function() {
+        options.velocitySpeed = this.value;
+        velocitySpeedValueOutput.innerHTML = this.value;
+      }
+
+      slider = document.getElementById("rotationSpeedSlider");
+      rotationSpeedValueOutput = document.getElementById("rotationSpeedValue");
+      rotationSpeedValueOutput.innerHTML = slider.value;
+      slider.oninput = function() {
         options.rotationSpeed = this.value;
-        speed.innerHTML = this.value;
+        rotationSpeedValueOutput.innerHTML = this.value;
+      }
+
+      slider = document.getElementById("rotationRadiusSlider");
+      rotationRadiusValueOutput = document.getElementById("rotationRadiusValue");
+      rotationRadiusValueOutput.innerHTML = slider.value;
+      slider.oninput = function() {
+        options.rotationRadius = this.value;
+        rotationRadiusValueOutput.innerHTML = this.value;
       }
     </script>
 </body>

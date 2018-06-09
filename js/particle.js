@@ -1,7 +1,24 @@
 var camera, tick = 0,
       scene, renderer, clock = new THREE.Clock(),
       controls, container,
-      options, spawnerOptions, particleSystem, light;
+      options, spawnerOptions, particleSystem, light, baselt, useAI = false;
+
+    function handleMouseMove(event){
+      if(!useAI){
+        let x_c = window.innerWidth / 2;
+        let y_c = window.innerHeight / 2;
+        let x_diff = event.clientX - x_c;
+        let y_diff = event.clientY - y_c;
+        // If within range
+        if(Math.abs(x_diff) < 320 && Math.abs(y_diff) < 240){
+          direction.x = x_diff;
+          direction.y = -y_diff;
+          direction.normalize();
+        }
+      }
+    }
+
+    document.onmousemove = handleMouseMove;
 
     init();
     animate();
@@ -12,8 +29,19 @@ var camera, tick = 0,
 
       container = document.getElementById( 'layers' );
 
-      camera = new THREE.PerspectiveCamera( 28, window.innerWidth / window.innerHeight, 1, 10000 );
+      container.style.height = window.innerHeight + 'px';
+      container.style.width = 4/3 * window.innerHeight + 'px';
+
+      var videoDisp = document.getElementById( 'canvas' );
+      videoDisp.style.height =  container.style.height;
+      videoDisp.style.width =  container.style.width;
+
+      console.log("Particle");
+
+      camera = new THREE.PerspectiveCamera( 28, 640 / 480, 1, 1000 );
       camera.position.z = 100;
+
+      var vector = new THREE.Vector3( 1, 1, -1 ).unproject( camera );
 
       scene = new THREE.Scene();
 
@@ -43,32 +71,37 @@ var camera, tick = 0,
       */
 
       options = {
-        position: new THREE.Vector3(-40, 0, 0),
-        positionRandomness: 2,
-        velocity: new THREE.Vector3(100, 0, 0),
-        velocityRandomness: 0.05,
-        color: 0x000000,
-        colorRandomness: 1,
-        turbulence: 0,
-        lifetime: 20,
-        size: 8,
+        // position: new THREE.Vector3(-40, 0, 0),
+        // positionRandomness: 2,
+        // velocity: new THREE.Vector3(100, 0, 0),
+        // velocityRandomness: 0.05,
+        // color: 0x000000,
+        // colorRandomness: 1,
+        // turbulence: 0,
+        // lifetime: 20,
+        // size: 8,
         rotationSpeed: 8,
-        // position: new THREE.Vector3(),
-        // containerCount: 1000,
-        // positionRandomness: 0.0,
-        // smoothPosition: false,
-        // velocity: new THREE.Vector3(50.0, 0.0, 0.0),
-        // velocityRandomness: 1.5,
-        // color: 0xaa88ff,
-        // colorRandomness: .2,
-        // turbulence: 0.0,
-        // lifetime: 5,
-        // size: 20,
-        // sizeRandomness: 1
+        position: new THREE.Vector3(0.0, 0.0, 0.0),
+        containerCount: 1000,
+        positionRandomness: 0.0,
+        smoothPosition: false,
+        velocity: new THREE.Vector3(),
+        velocityRandomness: 0.5,
+        color: 0xaa88ff,
+        colorRandomness: .2,
+        turbulence: 0.0,
+        lifetime: 6,
+        size: 20,
+        sizeRandomness: 1,
+        x_threshold: vector.x,
+        y_threshold: vector.y,
+        rotationSpeed: 8,
       };
 
+      baselt = options.lifetime;
+
       spawnerOptions = {
-        spawnRate: 2000,
+        spawnRate: 1000,
         horizontalSpeed: 1.5,
         verticalSpeed: 1.33,
         timeScale: 1
@@ -79,7 +112,7 @@ var camera, tick = 0,
       renderer = new THREE.WebGLRenderer({alpha: true, antialias: true});
       renderer.setPixelRatio( window.devicePixelRatio );
       renderer.setSize( container.clientWidth, container.clientHeight );
-      renderer.setClearColor(0x000000, 1.0); // TODO: 1.0->0.0
+      renderer.setClearColor(0x000000, 0.0); // TODO: 1.0->0.0
       container.appendChild( renderer.domElement );
 
       window.addEventListener( 'resize', onWindowResize, false );
@@ -107,29 +140,14 @@ var camera, tick = 0,
       if ( tick < 0 ) tick = 0;
 
       if ( delta > 0 ) {
-
         offset = 0
         options.position.addScalar(Math.random() * offset- offset / 2);
-
+        let r = Math.random() * Math.PI;
+        options.velocity.copy(direction);
         for ( var x = 0; x < spawnerOptions.spawnRate * delta; x++ ) {
           // Spawn new particles
+          options.lifetime = baselt * (Math.random() + 0.5);
           let pContainer = particleSystem.spawnParticle( options );
-
-
-          // Hao: need to subtract by one because the particle cursor already moved on to the next position!
-          let idx = pContainer.PARTICLE_CURSOR - 1;
-          let positionAttribute = pContainer.particleShaderGeo.getAttribute( 'position' );
-          let x = positionAttribute.array[ idx * 3 + 0 ];
-          let y = positionAttribute.array[ idx * 3 + 1 ];
-          let z = positionAttribute.array[ idx * 3 + 2 ];
-          //console.log(x, y, z);
-          if (x > 100){
-            // Hit left or right wall
-            pContainer.particleShaderGeo.getAttribute( 'bounce' )[idx] =  1;
-          }else{
-            // Hit top or bottom wall
-          }
-
         }
 
       }

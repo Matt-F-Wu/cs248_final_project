@@ -37,6 +37,9 @@ THREE.GPUParticleSystem = function ( options ) {
 
 	this.flex_position = false || options.flex_position;
 
+	this.x_threshold = options.x_threshold || 32;
+	this.y_threshold = options.y_threshold || 24;
+
 	// custom vertex and fragement shader
 
 	var GPUParticleShader = {
@@ -46,7 +49,8 @@ THREE.GPUParticleSystem = function ( options ) {
 			'uniform float uTime;',
 			'uniform float uScale;',
 			'uniform sampler2D tNoise;',
-
+			'uniform float x_threshold;',
+			'uniform float y_threshold;',
 			'attribute vec3 positionStart;',
 			'attribute float startTime;',
 			'attribute vec3 velocity;',
@@ -102,23 +106,49 @@ THREE.GPUParticleSystem = function ( options ) {
 			'	vec3 noiseVel = ( noise.rgb - 0.5 ) * 30.0;',
 			'	newPosition = mix( newPosition, newPosition + vec3( noiseVel * ( turbulence * 5.0 ) ), ( timeElapsed / lifeTime ) );',
 
+			' float x = abs(newPosition.x);',
+			' float y = abs(newPosition.y);',
 
-			'	float threshold = 50.0;',
+			'if(x > x_threshold || y > y_threshold){',
 
-			'	if(newPosition.x > threshold || newPosition.x < -1.0 * threshold){',
+			'	float x_i = y_threshold * x / y;',
+			'	float y_i = x_threshold * y / x;',
 
-			'		newPosition.y = newPosition.y * threshold / newPosition.x * 2.;',
+			'	if(y_i < y_threshold && x_i > x_threshold){',
+			'		float x_e = (x - x_threshold);',
+			'		float y_e = x_e * y / x;',
+			'		if(newPosition.x > 0.){',
+			'			newPosition.x -= x_e;',
+			'		}else{',
+			'			newPosition.x += x_e;',
+			'		}',
 
-			'		newPosition.x = threshold * 2. - newPosition.x;',
-
-			'	}else if(newPosition.y > threshold || newPosition.y < -1.0 * threshold){',
-
-			'		newPosition.x = newPosition.x * threshold / newPosition.y * 2.;',
-
-			'		newPosition.y = threshold * 2. - newPosition.y;',
-			'	}else{',
-
+			'		if(newPosition.y > 0.){',
+			'			newPosition.y += y_e;',
+			'		}else{',
+			'			newPosition.y -= y_e;',
+			'		}',
 			'	}',
+
+			'	if(y_i >= y_threshold && x_i <= x_threshold){',
+			'		float y_e = y - y_threshold;',
+			'		float x_e = x * y_e / y;',
+
+			'		if(newPosition.x > 0.){',
+			'			newPosition.x += x_e;',
+			'		}else{',
+			'			newPosition.x -= x_e;',
+			'		}',
+
+			'		if(newPosition.y > 0.){',
+			'			newPosition.y -= y_e;',
+			'		}else{',
+			'			newPosition.y += y_e;',
+			'		}',
+			'	}',
+			'}',
+
+			'	lifeLeft *= (noise.r + 0.5);',
 
 			'	if( v.y > 0. && v.y < .05 ) {',
 
@@ -229,6 +259,12 @@ THREE.GPUParticleSystem = function ( options ) {
 			},
 			'tSprite': {
 				value: this.particleSpriteTex
+			},
+			'x_threshold': {
+				value: this.x_threshold
+			},
+			'y_threshold': {
+				value: this.y_threshold
 			}
 		},
 		blending: THREE.AdditiveBlending,

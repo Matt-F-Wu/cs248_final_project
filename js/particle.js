@@ -10,7 +10,7 @@ var camera, tick = 0,
         let x_diff = event.clientX - x_c;
         let y_diff = event.clientY - y_c;
         // If within range
-        if(Math.abs(x_diff) < 320 && Math.abs(y_diff) < 240){
+        if(Math.abs(x_diff) < 4/3 * window.innerHeight / 2 && Math.abs(y_diff) < window.innerHeight / 2){
           direction.x = x_diff;
           direction.y = -y_diff;
           direction.normalize();

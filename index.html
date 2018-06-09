@@ -10,35 +10,36 @@
   <script src="js/three.js"></script>
   <script type="text/javascript">
     var direction = new THREE.Vector3(1, 0, 0);
+    var useAI = false;
   </script>
   <script src="js/GPUParticleSystem.js"></script>
   <script type="text/javascript" src="./main.js"></script>
-
-
-  <style>
-    *, html {padding: 0; margin: 0;}
-    html{
-       background-color: black;
-    }
-    body{
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-    }
-  </style>
+  <link rel="stylesheet" href="./css/main.css" />
 </head>
 
 <body style="font-family: monospace;" ng-controller="MainController">
+    <div style="display: flex; flex-direction: column; align-items: center;
+    justify-content: center;">
+      <div class="column" style="justify-content: center;"><div class="diamond-narrow-a"></div><div class="diamond-narrow-a-after"></div></div>
+      <div class="column" style="justify-content: center;"><div class="diamond-narrow-b"></div><div class="diamond-narrow-b-after"></div></div>
+      <div class="column" style="justify-content: center;"><div class="diamond-narrow-c"></div><div class="diamond-narrow-c-after"></div></div>
+    </div>
 
-  <center>
+    <!-- Where the magic happens -->
     <video id="video" autoplay="true" style="display:none;"></video>
     <div style="display: flex; align-items: center; justify-content: center">
       <canvas id="canvas" style="width:640px; height:480px; opacity: 1.0; z-index: 10;"></canvas>
       <div id="layers" style="width:640px; height:480px; position: absolute; z-index: 20;"></div>
     </div>
-  </center>
-  
+
+    <div style="display: flex; flex-direction: column; align-items: center;
+    justify-content: center;">
+      <div class="btnpure" ng-click="toggleMode()" style="position: absolute; right: 0px; top: 20px;">{{buttonText}}</div>
+      <div class="column" style="justify-content: center;"><div class="diamond-narrow-d"></div><div class="diamond-narrow-d-after"></div></div>
+      <div class="column" style="justify-content: center;"><div class="diamond-narrow-a"></div><div class="diamond-narrow-a-after"></div></div>
+      <div class="column" style="justify-content: center;"><div class="diamond-narrow-b"></div><div class="diamond-narrow-b-after"></div></div>
+    </div>
+
   <script src="js/particle.js"></script>
 </body>
 

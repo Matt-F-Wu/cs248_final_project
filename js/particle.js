@@ -1,7 +1,7 @@
 var camera, tick = 0,
       scene, renderer, clock = new THREE.Clock(),
       controls, container,
-      options, spawnerOptions, particleSystem, light, baselt, useAI = false;
+      options, spawnerOptions, particleSystem, light, baselt;
 
     function handleMouseMove(event){
       if(!useAI){
@@ -90,8 +90,8 @@ var camera, tick = 0,
         color: 0xaa88ff,
         colorRandomness: .2,
         turbulence: 0.0,
-        lifetime: 6,
-        size: 20,
+        lifetime: 10,
+        size: 25,
         sizeRandomness: 1,
         x_threshold: vector.x,
         y_threshold: vector.y,

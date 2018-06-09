@@ -1,8 +1,15 @@
 var app = angular.module('mainApp', ['ngResource']);
 
 app.controller('MainController', ['$scope', '$resource', function($scope, $resource) {
-    $scope.hand_control = true;
-
+    $scope.buttonText = "Use AI";
+    $scope.toggleMode = function(){
+      if(useAI){
+        $scope.buttonText = "Use AI";
+      }else{
+        $scope.buttonText = "Use Mouse";
+      }
+      useAI = !useAI;
+    }
     var Predict = $resource('http://localhost:8080/prediction');
     var blocking = false;
     
@@ -74,15 +81,15 @@ app.controller('MainController', ['$scope', '$resource', function($scope, $resou
       var that = this, image, candidate;
 
       /* Continuously track hand movements per animation frame*/
-      if($scope.hand_control) {
-        requestAnimationFrame( function() { return that.tick(); } );
-      }
+      
+      requestAnimationFrame( function() { return that.tick(); } );
+      
 
       if (this.video.readyState === this.video.HAVE_ENOUGH_DATA){
         image = this.snapshot();
         //console.log("image str: ", image);
         /* Abtain a medium quality jpg image to send to backend */
-        if(!blocking){
+        if(!blocking && useAI){
           blocking = !blocking;
           Predict.save({}, {img: image}).$promise.then(function(joints) {
             if(!joints){
@@ -99,11 +106,11 @@ app.controller('MainController', ['$scope', '$resource', function($scope, $resou
               x *= scaling;
               let y = (that.p2d[3][1] - that.p2d[1][1]) + (that.p2d[7][1] - that.p2d[5][1]);
               y *= scaling;
-              direction.set(x, y, -1).normalize();
+              direction.set(x, -y, -1).normalize();
             }
-            if(source){
-              source.set(that.p2d[20][0], that.p2d[20][1], 0);
-            }
+            // if(source){
+            //   source.set(that.p2d[20][0], that.p2d[20][1], 0);
+            // }
             //** Obtained  **//
             // console.log(that.p2d);
             // that.drawJoints(that.p2d);

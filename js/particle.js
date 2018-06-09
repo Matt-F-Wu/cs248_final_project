@@ -71,31 +71,23 @@ var camera, tick = 0,
       */
 
       options = {
-        // position: new THREE.Vector3(-40, 0, 0),
-        // positionRandomness: 2,
-        // velocity: new THREE.Vector3(100, 0, 0),
-        // velocityRandomness: 0.05,
-        // color: 0x000000,
-        // colorRandomness: 1,
-        // turbulence: 0,
-        // lifetime: 20,
-        // size: 8,
         rotationSpeed: 8,
         position: new THREE.Vector3(0.0, 0.0, 0.0),
         containerCount: 1000,
-        positionRandomness: 0.0,
+        positionRandomness: 1.5,
         smoothPosition: false,
         velocity: new THREE.Vector3(),
+        velocitySpeed: 2,
         velocityRandomness: 0.5,
-        color: 0xaa88ff,
-        colorRandomness: .2,
-        turbulence: 0.0,
-        lifetime: 10,
-        size: 25,
-        sizeRandomness: 1,
+        color: 0xffa0a0,
+        colorRandomness: 5,
+        turbulence: 0.1,
+        lifetime: 5,
+        size: 15,
+        sizeRandomness: 2,
         x_threshold: vector.x,
         y_threshold: vector.y,
-        rotationSpeed: 8,
+        rotationSpeed: 16,
       };
 
       baselt = options.lifetime;
@@ -140,10 +132,9 @@ var camera, tick = 0,
       if ( tick < 0 ) tick = 0;
 
       if ( delta > 0 ) {
-        offset = 0
-        options.position.addScalar(Math.random() * offset- offset / 2);
         let r = Math.random() * Math.PI;
         options.velocity.copy(direction);
+        options.velocity.multiplyScalar(options.velocitySpeed);
         for ( var x = 0; x < spawnerOptions.spawnRate * delta; x++ ) {
           // Spawn new particles
           options.lifetime = baselt * (Math.random() + 0.5);

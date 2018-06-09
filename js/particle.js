@@ -1,7 +1,25 @@
 var camera, tick = 0,
       scene, renderer, clock = new THREE.Clock(),
       controls, container,
-      options, spawnerOptions, particleSystem, light, baselt;
+      options, spawnerOptions, particleSystem, light, baselt, useAI = false,
+      direction = new THREE.Vector3(1, 0, 0);
+
+    function handleMouseMove(event){
+      if(!useAI){
+        let x_c = window.innerWidth / 2;
+        let y_c = window.innerHeight / 2;
+        let x_diff = event.clientX - x_c;
+        let y_diff = event.clientY - y_c;
+        // If within range
+        if(Math.abs(x_diff) < 320 && Math.abs(y_diff) < 240){
+          direction.x = x_diff;
+          direction.y = -y_diff;
+          direction.normalize();
+        }
+      }
+    }
+
+    document.onmousemove = handleMouseMove;
 
     init();
     animate();
@@ -112,7 +130,7 @@ var camera, tick = 0,
         offset = 0
         options.position.addScalar(Math.random() * offset- offset / 2);
         let r = Math.random() * Math.PI;
-        options.velocity.set(1., 0., 0.0).normalize();
+        options.velocity.copy(direction);
         for ( var x = 0; x < spawnerOptions.spawnRate * delta; x++ ) {
           // Spawn new particles
           options.lifetime = baselt * (Math.random() + 0.5);

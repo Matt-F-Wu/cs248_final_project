@@ -60,6 +60,7 @@ THREE.GPUParticleSystem = function ( options ) {
 			'attribute float size;',
 			'attribute float lifeTime;',
 			'attribute float rotationSpeed;',
+			'attribute float rotationRadius;',
 
 			'varying vec4 vColor;',
 			'varying float lifeLeft;',
@@ -100,7 +101,7 @@ THREE.GPUParticleSystem = function ( options ) {
 			' base2 = normalize(base2);',
 			' float theta = rotationSpeed * timeElapsed;',
 			' vec3 positionOffset = base1 * cos(theta) + base2 * sin(theta);',
-			' newPosition += positionOffset;',
+			' newPosition += rotationRadius * positionOffset;',
 
 			'	vec3 noise = texture2D( tNoise, vec2( newPosition.x * 0.015 + ( uTime * 0.05 ), newPosition.y * 0.02 + ( uTime * 0.015 ) ) ).rgb;',
 			'	vec3 noiseVel = ( noise.rgb - 0.5 ) * 30.0;',
@@ -368,6 +369,7 @@ THREE.GPUParticleContainer = function ( maxParticles, particleSystem ) {
 	this.particleShaderGeo.addAttribute( 'size', new THREE.BufferAttribute( new Float32Array( this.PARTICLE_COUNT ), 1 ).setDynamic( true ) );
 	this.particleShaderGeo.addAttribute( 'lifeTime', new THREE.BufferAttribute( new Float32Array( this.PARTICLE_COUNT ), 1 ).setDynamic( true ) );
 	this.particleShaderGeo.addAttribute( 'rotationSpeed', new THREE.BufferAttribute( new Float32Array( this.PARTICLE_COUNT ), 1 ).setDynamic( true ) );
+	this.particleShaderGeo.addAttribute( 'rotationRadius', new THREE.BufferAttribute( new Float32Array( this.PARTICLE_COUNT ), 1 ).setDynamic( true ) );
 	// Use unsigned int, 1 byte, to save memory
 	this.particleShaderGeo.addAttribute( 'bounce', new THREE.BufferAttribute( new Float32Array( this.PARTICLE_COUNT ), 1 ).setDynamic( true ) );
 
@@ -390,6 +392,7 @@ THREE.GPUParticleContainer = function ( maxParticles, particleSystem ) {
 		var sizeAttribute = this.particleShaderGeo.getAttribute( 'size' );
 		var lifeTimeAttribute = this.particleShaderGeo.getAttribute( 'lifeTime' );
 		var rotationSpeedAttribute = this.particleShaderGeo.getAttribute( 'rotationSpeed' );
+		var rotationRadiusAttribute = this.particleShaderGeo.getAttribute( 'rotationRadius' );
 		var bounceAttribute = this.particleShaderGeo.getAttribute( 'bounce' );
 
 		options = options || {};
@@ -411,6 +414,7 @@ THREE.GPUParticleContainer = function ( maxParticles, particleSystem ) {
 		// Hao: deals with bounce state here
 		var bounce = options.bounce !== undefined ? options.bounce : bounceAttribute[i] === undefined? 0 : bounceAttribute[i];
 		var rotationSpeed = options.rotationSpeed !== undefined ? options.rotationSpeed : 10;
+		var rotationRadius = options.rotationRadius !== undefined ? options.rotationRadius : 1;
 
 		if ( this.DPR !== undefined ) size *= this.DPR;
 
@@ -519,6 +523,7 @@ THREE.GPUParticleContainer = function ( maxParticles, particleSystem ) {
 
 		// spiral
 		rotationSpeedAttribute.array[ i ] = rotationSpeed;
+		rotationRadiusAttribute.array[ i ] = rotationRadius;
 
 		// offset
 
@@ -575,6 +580,7 @@ THREE.GPUParticleContainer = function ( maxParticles, particleSystem ) {
 			var sizeAttribute = this.particleShaderGeo.getAttribute( 'size' );
 			var lifeTimeAttribute = this.particleShaderGeo.getAttribute( 'lifeTime' );
 			var rotationSpeedAttribute = this.particleShaderGeo.getAttribute( 'rotationSpeed' );
+			var rotationRadiusAttribute = this.particleShaderGeo.getAttribute( 'rotationRadius' );
 			var bounceAttribute = this.particleShaderGeo.getAttribute( 'bounce' );
 
 			if ( this.offset + this.count < this.PARTICLE_COUNT ) {
@@ -588,6 +594,7 @@ THREE.GPUParticleContainer = function ( maxParticles, particleSystem ) {
 				sizeAttribute.updateRange.offset = this.offset * sizeAttribute.itemSize;
 				lifeTimeAttribute.updateRange.offset = this.offset * lifeTimeAttribute.itemSize;
 				rotationSpeedAttribute.updateRange.offset = this.offset * rotationSpeedAttribute.itemSize;
+				rotationRadiusAttribute.updateRange.offset = this.offset * rotationRadiusAttribute.itemSize;
 				bounceAttribute.updateRange.offset = this.offset * bounceAttribute.itemSize;
 
 				positionStartAttribute.updateRange.count = this.count * positionStartAttribute.itemSize;
@@ -599,6 +606,7 @@ THREE.GPUParticleContainer = function ( maxParticles, particleSystem ) {
 				sizeAttribute.updateRange.count = this.count * sizeAttribute.itemSize;
 				lifeTimeAttribute.updateRange.count = this.count * lifeTimeAttribute.itemSize;
 				rotationSpeedAttribute.updateRange.count = this.count * rotationSpeedAttribute.itemSize;
+				rotationRadiusAttribute.updateRange.count = this.count * rotationRadiusAttribute.itemSize;
 				bounceAttribute.updateRange.count = this.count * bounceAttribute.itemSize;
 
 			} else {
@@ -612,6 +620,7 @@ THREE.GPUParticleContainer = function ( maxParticles, particleSystem ) {
 				sizeAttribute.updateRange.offset = 0;
 				lifeTimeAttribute.updateRange.offset = 0;
 				rotationSpeedAttribute.updateRange.offset = 0;
+				rotationRadiusAttribute.updateRange.offset = 0;
 
 				// Use -1 to update the entire buffer, see #11476
 				positionStartAttribute.updateRange.count = - 1;
@@ -623,6 +632,7 @@ THREE.GPUParticleContainer = function ( maxParticles, particleSystem ) {
 				sizeAttribute.updateRange.count = - 1;
 				lifeTimeAttribute.updateRange.count = - 1;
 				rotationSpeedAttribute.updateRange.count = - 1;
+				rotationRadiusAttribute.updateRange.count = - 1;
 				bounceAttribute.updateRange.count = - 1;
 			}
 
@@ -635,6 +645,7 @@ THREE.GPUParticleContainer = function ( maxParticles, particleSystem ) {
 			sizeAttribute.needsUpdate = true;
 			lifeTimeAttribute.needsUpdate = true;
 			rotationSpeedAttribute.needsUpdate = true;
+			rotationRadiusAttribute.needsUpdate = true;
 			bounceAttribute.needsUpdate = true;
 
 			this.offset = 0;

@@ -91,6 +91,7 @@ var output, speed;
         x_threshold: vector.x,
         y_threshold: vector.y,
         rotationSpeed: 16,
+        rotationRadius: 1,
       };
 
       baselt = options.lifetime;
